@@ -1,6 +1,15 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/ui/form_widgets/country_autocomplete.dart';
+import 'package:flutter_application_2/ui/form_widgets/dob_field.dart';
+import 'package:flutter_application_2/ui/form_widgets/gender_radio.dart';
+import 'package:flutter_application_2/ui/form_widgets/height_slider.dart';
+import 'package:flutter_application_2/ui/form_widgets/hobbies_chips.dart';
+import 'package:flutter_application_2/ui/form_widgets/main_controls_button.dart';
+import 'package:flutter_application_2/ui/form_widgets/name_field.dart';
+import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
+import 'package:provider/provider.dart';
+
+enum ViewType { apple, banana, grapes }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -10,116 +19,106 @@ class Home extends StatefulWidget {
 }
 
 class _Home extends State<Home> {
-  StreamController<int> myStreamController = StreamController<int>();
-  late Stream<int> myStream;
-  int y = 0;
-  late StreamSubscription z;
-
-  @override
-  void initState() {
-    myStream = myStreamController.stream.asBroadcastStream();
-
-    z = myStream.listen((onData) => print(onData.toString()));
-
-    // StreamSubscription x = myStream.listen(
-    //   (data) {
-    //     print(data);
-    //   },
-    //   onDone: () => print("done"),
-    //   onError: (x) => print("error $x"),
-    // );
-
-    Timer.periodic(Duration(seconds: 1), (x) {
-      if (!myStreamController.isClosed) {
-        myStreamController.add(y);
-      }
-      if (y > 20 && y < 22) {
-        myStreamController.addError("errorrr");
-      }
-
-      if (y > 30) {
-        myStreamController.close();
-      }
-      y++;
-    });
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    myStreamController.close();
-    super.dispose();
-  }
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  int _stepPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Home")),
-      body: SingleChildScrollView(
-        child: Column(
-          //crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(title: Text("Home")),
+        body: Column(
           children: [
-            ElevatedButton(onPressed: () => z.resume(), child: Text("resume")),
-            ElevatedButton(onPressed: () => z.cancel(), child: Text("cancel")),
-            ElevatedButton(onPressed: () => z.pause(), child: Text("pause")),
+            Expanded(
+              child: Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Stepper(
+                  currentStep: _stepPage,
+                  onStepContinue: () {
+                    if (_stepPage < 5) {
+                      setState(() {
+                        _stepPage++;
+                      });
+                    }
+                  },
+                  onStepCancel: () {
+                    if (_stepPage > 0) {
+                      setState(() {
+                        _stepPage--;
+                      });
+                    }
+                  },
 
-            StreamBuilder<int>(
-              stream: myStream,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(snapshot.data.toString());
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                } else {
-                  return Text("no data");
-                }
+                  onStepTapped: (value) {
+                    setState(() {
+                      _stepPage = value;
+                    });
+                  },
+                  connectorColor: WidgetStateProperty.all(Colors.deepPurple),
+                  controlsBuilder: (context, details) {
+                    return MainControlsButton(
+                      details: details,
+                      stepPage: _stepPage,
+                    );
+                  },
+
+                  steps: [
+                    ///name
+                    Step(
+                      title: Text("Enter your name"),
+                      state: _stepPage == 0
+                          ? StepState.editing
+                          : StepState.indexed,
+                      content: NameField(),
+                    ),
+
+                    ///dob
+                    Step(
+                      title: Text("Enter your date of birth"),
+                      content: DOBField(),
+                    ),
+
+                    ///gender
+                    Step(
+                      title: Text("Select your gender"),
+                      content: GenderRadio(),
+                    ),
+
+                    ///height
+                    Step(
+                      title: Text("Select your height"),
+                      content: HeightSlider(),
+                    ),
+
+                    ///hobbies
+                    Step(
+                      title: Text("Select your hobbies"),
+                      content: HobbiesChips(),
+                    ),
+
+                    ///country
+                    Step(
+                      title: Text("Select your country"),
+                      content: CountryAutocomplete(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            ElevatedButton(
+              onPressed: () {
+                context.read<UserFormVm>().setUserData();
+                _formKey.currentState?.validate();
+                _formKey.currentState?.reset();
+
+                context.read<UserFormVm>().clearData();
               },
-            ),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                color: Colors.yellowAccent,
-                child: Text(MediaQuery.of(context).viewPadding.toString()),
-              ),
-            ),
-
-            Container(
-              height: 300,
-              width: 300,
-              color: Colors.grey,
-              child: FractionallySizedBox(
-                heightFactor: 0.5,
-                widthFactor: 0.5,
-                child: Container(color: Colors.blueAccent),
-              ),
-            ),
-
-            Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              width: double.infinity,
-              color: Colors.greenAccent,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Column(
-                    children: [
-                      Text(constraints.maxHeight.toString()),
-                      Container(
-                        color: Colors.deepOrange,
-                        height: constraints.maxHeight * 0.1,
-                        width: constraints.maxWidth * 0.1,
-                      ),
-
-                      Container(
-                        color: const Color.fromARGB(255, 244, 133, 99),
-                        height: constraints.maxHeight * 0.3,
-                        width: constraints.maxWidth * 0.3,
-                      ),
-                    ],
-                  );
-                },
-              ),
+              child: Text("hey"),
             ),
           ],
         ),
