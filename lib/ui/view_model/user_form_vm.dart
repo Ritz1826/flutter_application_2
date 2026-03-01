@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/ui/data_model/user_data_model.dart';
+import 'package:flutter_application_2/ui/form_widgets/widget_helpers/dob_helpers.dart';
 
 class UserFormVm extends ChangeNotifier {
   ///tbd
@@ -28,23 +29,11 @@ class UserFormVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isNameValid = false;
-  bool get isNameValid => _isNameValid;
-  set isNameValid(bool value) {
-    _isNameValid = value;
-  }
-
   String? _userDob;
   String? get userDob => _userDob;
   set userDob(String? value) {
     _userDob = value;
     notifyListeners();
-  }
-
-  bool _isDobValid = false;
-  bool get isDobValid => _isDobValid;
-  set isDobValid(bool value) {
-    _isDobValid = value;
   }
 
   String? _userGender;
@@ -112,14 +101,15 @@ class UserFormVm extends ChangeNotifier {
   }
 
   void clearData() {
-    userCountry = null;
-    userData = null;
-    userDob = null;
-    userGender = null;
-    userHeight = null;
+    _userCountry = null;
+    _userData = null;
+    _userDob = null;
+    _userGender = null;
+    _userHeight = null;
     removeAllHobbies();
     clearControllers();
-    userName = null;
+    _userName = null;
+    notifyListeners();
   }
 
   bool _isLoading = false;
@@ -130,11 +120,7 @@ class UserFormVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void validateAndContinue(
-    int stepPage,
-    // VoidCallback? onStepContinue,
-    GlobalKey<FormState> formKey,
-  ) async {
+  void validateAndContinue(int stepPage, GlobalKey<FormState> formKey) async {
     if (stepPage == 1) {
       getGenderState(stepPage + 1);
     }
@@ -166,9 +152,9 @@ class UserFormVm extends ChangeNotifier {
   }
 
   bool tapAndValidate(stepPage) {
-    if (stepPage == 0 && !isNameValid) {
+    if (stepPage == 0 && !isNameValidator(nameController.text)) {
       return false;
-    } else if (stepPage == 1 && !isDobValid) {
+    } else if (stepPage == 1 && !isDobValidator(dobController.text)) {
       return false;
     } else if (stepPage == 2 && userGender == null) {
       return false;
@@ -225,24 +211,24 @@ class UserFormVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void getNameState(int stepPage) {
+  void getNameState(int stepPage, String? value) {
     if (stepPage == 0 && userName == null) {
       nameState = StepState.editing;
-    } else if (stepPage == 0 && !isNameValid) {
+    } else if (stepPage == 0 && !isNameValidator(value)) {
       nameState = StepState.error;
-    } else if (isNameValid) {
+    } else if (isNameValidator(value)) {
       nameState = StepState.complete;
     } else {
       nameState = StepState.indexed;
     }
   }
 
-  void getDobState(int stepPage) {
+  void getDobState(int stepPage, String? value) {
     if (stepPage == 1 && userDob == null) {
       dobState = StepState.editing;
-    } else if (stepPage == 1 && !isDobValid) {
+    } else if (stepPage == 1 && !isDobValidator(value)) {
       dobState = StepState.error;
-    } else if (isDobValid) {
+    } else if (isDobValidator(value)) {
       dobState = StepState.complete;
     } else {
       dobState = StepState.indexed;
@@ -286,6 +272,22 @@ class UserFormVm extends ChangeNotifier {
       countryState = StepState.complete;
     } else {
       countryState = StepState.indexed;
+    }
+  }
+
+  bool isNameValidator(String? value) {
+    if ((value?.length ?? 0) <= 2) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  bool isDobValidator(String? value) {
+    if (!DateValidator().isValidDate(value)) {
+      return false;
+    } else {
+      return true;
     }
   }
 }

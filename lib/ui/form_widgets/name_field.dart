@@ -15,7 +15,7 @@ class _NameFieldState extends State<NameField> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      context.read<UserFormVm>().getNameState(widget.stepPage);
+      context.read<UserFormVm>().getNameState(widget.stepPage, "");
     });
 
     super.initState();
@@ -33,25 +33,13 @@ class _NameFieldState extends State<NameField> {
         TextFormField(
           onChanged: (value) {
             vm.userName = value;
-            // vm.getNameState(widget.stepPage);
+            vm.getNameState(widget.stepPage, value);
           },
           inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'[0-9]'))],
           controller: vm.nameController,
           maxLength: 10,
           validator: (value) {
-            if ((value?.length ?? 0) <= 2) {
-              vm.isNameValid = false;
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                vm.getNameState(widget.stepPage);
-              });
-              return "Enter valid name";
-            } else {
-              vm.isNameValid = true;
-              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                vm.getNameState(widget.stepPage);
-              });
-              return null;
-            }
+            return vm.isNameValidator(value) ? null : "Enter valid name";
           },
           decoration: InputDecoration(
             hintText: "Enter here",

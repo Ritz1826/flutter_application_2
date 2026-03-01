@@ -74,14 +74,9 @@ class _CountryAutocompleteState extends State<CountryAutocomplete> {
                 return TextFormField(
                   controller: textEditingController,
                   focusNode: focusNode,
-                  onChanged: (value) {
-                    // focusNode.requestFocus();
-                  },
                   inputFormatters: [
                     FilteringTextInputFormatter.deny(RegExp(r'[0-9]')),
                   ],
-
-                  // controller: nameController,
                   decoration: InputDecoration(
                     hintText: "Enter here",
                     hintStyle: TextStyle(color: Colors.grey),
