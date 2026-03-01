@@ -2,10 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:provider/provider.dart';
 
-class GenderRadio extends StatelessWidget {
-  const GenderRadio({super.key});
+class GenderRadio extends StatefulWidget {
+  final int stepPage;
+  const GenderRadio({super.key, required this.stepPage});
 
   static const List<String> _radioOptions = ["Male", "Female", "Other"];
+
+  @override
+  State<GenderRadio> createState() => _GenderRadioState();
+}
+
+class _GenderRadioState extends State<GenderRadio> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<UserFormVm>().getGenderState(widget.stepPage);
+    });
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<UserFormVm>().getGenderState(widget.stepPage);
+    });
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +43,7 @@ class GenderRadio extends StatelessWidget {
             return RadioGroup<String>(
               onChanged: (value) {
                 context.read<UserFormVm>().userGender = value;
+                context.read<UserFormVm>().getGenderState(widget.stepPage);
               },
 
               groupValue: data,
@@ -27,18 +51,18 @@ class GenderRadio extends StatelessWidget {
               child: Column(
                 children: [
                   RadioListTile(
-                    value: _radioOptions[0],
-                    title: Text(_radioOptions[0]),
+                    value: GenderRadio._radioOptions[0],
+                    title: Text(GenderRadio._radioOptions[0]),
                   ),
                   SizedBox(height: 20),
                   RadioListTile(
-                    value: _radioOptions[1],
-                    title: Text(_radioOptions[1]),
+                    value: GenderRadio._radioOptions[1],
+                    title: Text(GenderRadio._radioOptions[1]),
                   ),
                   SizedBox(height: 20),
                   RadioListTile(
-                    value: _radioOptions[2],
-                    title: Text(_radioOptions[2]),
+                    value: GenderRadio._radioOptions[2],
+                    title: Text(GenderRadio._radioOptions[2]),
                   ),
                 ],
               ),

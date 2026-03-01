@@ -2,8 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:provider/provider.dart';
 
-class HeightSlider extends StatelessWidget {
-  const HeightSlider({super.key});
+class HeightSlider extends StatefulWidget {
+  final int stepPage;
+  const HeightSlider({super.key, required this.stepPage});
+
+  @override
+  State<HeightSlider> createState() => _HeightSliderState();
+}
+
+class _HeightSliderState extends State<HeightSlider> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<UserFormVm>().getHeightState(widget.stepPage);
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +46,7 @@ class HeightSlider extends StatelessWidget {
                   context.read<UserFormVm>().userHeight = double.parse(
                     value.toStringAsFixed(1),
                   );
+                  context.read<UserFormVm>().getHeightState(widget.stepPage);
                 },
               );
             },

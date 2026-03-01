@@ -4,13 +4,23 @@ import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:provider/provider.dart';
 
 class NameField extends StatefulWidget {
-  const NameField({super.key});
+  final int stepPage;
+  const NameField({super.key, required this.stepPage});
 
   @override
   State<NameField> createState() => _NameFieldState();
 }
 
 class _NameFieldState extends State<NameField> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<UserFormVm>().getNameState(widget.stepPage);
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     final vm = context.read<UserFormVm>();
@@ -23,6 +33,7 @@ class _NameFieldState extends State<NameField> {
         TextFormField(
           onChanged: (value) {
             vm.userName = value;
+            // vm.getNameState(widget.stepPage);
           },
           inputFormatters: [FilteringTextInputFormatter.deny(RegExp(r'[0-9]'))],
           controller: vm.nameController,
@@ -30,9 +41,15 @@ class _NameFieldState extends State<NameField> {
           validator: (value) {
             if ((value?.length ?? 0) <= 2) {
               vm.isNameValid = false;
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                vm.getNameState(widget.stepPage);
+              });
               return "Enter valid name";
             } else {
               vm.isNameValid = true;
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                vm.getNameState(widget.stepPage);
+              });
               return null;
             }
           },

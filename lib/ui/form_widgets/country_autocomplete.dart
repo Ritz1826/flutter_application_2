@@ -4,7 +4,8 @@ import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:provider/provider.dart';
 
 class CountryAutocomplete extends StatefulWidget {
-  const CountryAutocomplete({super.key});
+  final int stepPage;
+  const CountryAutocomplete({super.key, required this.stepPage});
 
   static const List<String> _countries = [
     "India",
@@ -23,6 +24,15 @@ class CountryAutocomplete extends StatefulWidget {
 
 class _CountryAutocompleteState extends State<CountryAutocomplete> {
   final FocusNode focusNode = FocusNode();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<UserFormVm>().getCountryState(widget.stepPage);
+    });
+
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -45,6 +55,7 @@ class _CountryAutocompleteState extends State<CountryAutocomplete> {
 
           onSelected: (option) {
             vm.userCountry = option;
+            vm.getCountryState(widget.stepPage);
           },
 
           optionsBuilder: (textEditingValue) {

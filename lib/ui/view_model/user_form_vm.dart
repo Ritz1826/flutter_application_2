@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/ui/data_model/user_data_model.dart';
 
 class UserFormVm extends ChangeNotifier {
+  ///tbd
   final TextEditingController nameController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController countryController = TextEditingController();
@@ -121,24 +122,170 @@ class UserFormVm extends ChangeNotifier {
     userName = null;
   }
 
-  VoidCallback? validateAndContinue(
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+  set isLoading(bool value) {
+    print("vm set $value");
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void validateAndContinue(
     int stepPage,
-    VoidCallback? onStepContinue,
-  ) {
+    // VoidCallback? onStepContinue,
+    GlobalKey<FormState> formKey,
+  ) async {
+    if (stepPage == 1) {
+      getGenderState(stepPage + 1);
+    }
+
+    if (stepPage == 2) {
+      getHeightState(stepPage + 1);
+    }
+
+    if (stepPage == 3) {
+      getHobbiesState(stepPage + 1);
+    }
+
+    if (stepPage == 4) {
+      getCountryState(stepPage + 1);
+    }
+
+    if (stepPage == 5) {
+      isLoading = true;
+
+      await Future.delayed(Duration(seconds: 10));
+
+      setUserData();
+      formKey.currentState?.reset();
+
+      clearData();
+
+      isLoading = false;
+    }
+  }
+
+  bool tapAndValidate(stepPage) {
     if (stepPage == 0 && !isNameValid) {
-      return null;
+      return false;
     } else if (stepPage == 1 && !isDobValid) {
-      return null;
+      return false;
     } else if (stepPage == 2 && userGender == null) {
-      return null;
+      return false;
     } else if (stepPage == 3 && (userHeight == null || userHeight == 0)) {
-      return null;
+      return false;
     } else if (stepPage == 4 && (userHobbies?.isEmpty ?? true)) {
-      return null;
+      return false;
     } else if (stepPage == 5 && userCountry == null) {
-      return null;
+      return false;
     } else {
-      return onStepContinue;
+      return true;
+    }
+  }
+
+  StepState _nameState = StepState.indexed;
+  StepState get nameState => _nameState;
+  set nameState(StepState value) {
+    _nameState = value;
+    notifyListeners();
+  }
+
+  StepState _dobState = StepState.indexed;
+  StepState get dobState => _dobState;
+  set dobState(StepState value) {
+    _dobState = value;
+    notifyListeners();
+  }
+
+  StepState _genderState = StepState.indexed;
+  StepState get genderState => _genderState;
+  set genderState(StepState value) {
+    _genderState = value;
+    notifyListeners();
+  }
+
+  StepState _heightState = StepState.indexed;
+  StepState get heightState => _heightState;
+  set heightState(StepState value) {
+    _heightState = value;
+    notifyListeners();
+  }
+
+  StepState _hobbiesState = StepState.indexed;
+  StepState get hobbiesState => _hobbiesState;
+  set hobbiesState(StepState value) {
+    _hobbiesState = value;
+    notifyListeners();
+  }
+
+  StepState _countryState = StepState.indexed;
+  StepState get countryState => _countryState;
+  set countryState(StepState value) {
+    _countryState = value;
+    notifyListeners();
+  }
+
+  void getNameState(int stepPage) {
+    if (stepPage == 0 && userName == null) {
+      nameState = StepState.editing;
+    } else if (stepPage == 0 && !isNameValid) {
+      nameState = StepState.error;
+    } else if (isNameValid) {
+      nameState = StepState.complete;
+    } else {
+      nameState = StepState.indexed;
+    }
+  }
+
+  void getDobState(int stepPage) {
+    if (stepPage == 1 && userDob == null) {
+      dobState = StepState.editing;
+    } else if (stepPage == 1 && !isDobValid) {
+      dobState = StepState.error;
+    } else if (isDobValid) {
+      dobState = StepState.complete;
+    } else {
+      dobState = StepState.indexed;
+    }
+  }
+
+  void getGenderState(int stepPage) {
+    if (stepPage == 2 && userGender == null) {
+      genderState = StepState.editing;
+    } else if (userGender != null) {
+      genderState = StepState.complete;
+    } else {
+      genderState = StepState.indexed;
+    }
+  }
+
+  void getHeightState(int stepPage) {
+    if (stepPage == 3 && (userHeight == null || userHeight == 0)) {
+      heightState = StepState.editing;
+    } else if (userHeight != null) {
+      heightState = StepState.complete;
+    } else {
+      heightState = StepState.indexed;
+    }
+  }
+
+  void getHobbiesState(int stepPage) {
+    if (stepPage == 4 && (userHobbies?.isEmpty ?? true)) {
+      hobbiesState = StepState.editing;
+    } else if (userHobbies?.isNotEmpty ?? true) {
+      hobbiesState = StepState.complete;
+    } else {
+      hobbiesState = StepState.indexed;
+    }
+  }
+
+  void getCountryState(int stepPage) {
+    if (stepPage == 5 && userCountry == null) {
+      countryState = StepState.editing;
+    } else if (userCountry != null) {
+      countryState = StepState.complete;
+    } else {
+      countryState = StepState.indexed;
     }
   }
 }

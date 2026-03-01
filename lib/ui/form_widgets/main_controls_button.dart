@@ -5,24 +5,31 @@ import 'package:provider/provider.dart';
 class MainControlsButton extends StatelessWidget {
   final ControlsDetails details;
   final int stepPage;
+  final GlobalKey<FormState> formKey;
+
   const MainControlsButton({
     super.key,
     required this.details,
     required this.stepPage,
+    required this.formKey,
   });
 
   @override
   Widget build(BuildContext context) {
-    print("name rebuilkd");
-    context.watch<UserFormVm>().userName;
-
     return Column(
       children: [
         ElevatedButton(
-          onPressed: context.watch<UserFormVm>().validateAndContinue(
-            stepPage,
-            details.onStepContinue,
-          ),
+          onPressed: context.watch<UserFormVm>().tapAndValidate(stepPage)
+              ? () {
+                  context.read<UserFormVm>().validateAndContinue(
+                    stepPage,
+                    formKey,
+                  );
+
+                  details.onStepContinue?.call();
+                }
+              : null,
+
           child: Text(stepPage == 5 ? "Submit" : "Save and continue"),
         ),
 

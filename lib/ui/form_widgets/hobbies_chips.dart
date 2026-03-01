@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:provider/provider.dart';
 
-class HobbiesChips extends StatelessWidget {
-  const HobbiesChips({super.key});
+class HobbiesChips extends StatefulWidget {
+  final int stepPage;
+  const HobbiesChips({super.key, required this.stepPage});
 
   static const List<String> _hobbies = [
     "painting",
@@ -19,6 +20,20 @@ class HobbiesChips extends StatelessWidget {
   ];
 
   @override
+  State<HobbiesChips> createState() => _HobbiesChipsState();
+}
+
+class _HobbiesChipsState extends State<HobbiesChips> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<UserFormVm>().getHobbiesState(widget.stepPage);
+    });
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -29,7 +44,7 @@ class HobbiesChips extends StatelessWidget {
           runSpacing: 10,
           spacing: 10,
 
-          children: _hobbies.map((x) {
+          children: HobbiesChips._hobbies.map((x) {
             return Selector<UserFormVm, List<String>?>(
               selector: (context, x) => x.userHobbies,
               builder: (context, data, child) {
@@ -57,6 +72,7 @@ class HobbiesChips extends StatelessWidget {
                     } else {
                       context.read<UserFormVm>().removeUserHobbies = x;
                     }
+                    context.read<UserFormVm>().getHobbiesState(widget.stepPage);
                   },
                 );
               },

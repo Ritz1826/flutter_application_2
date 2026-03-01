@@ -28,100 +28,142 @@ class _Home extends State<Home> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        appBar: AppBar(title: Text("Home")),
-        body: Column(
-          children: [
-            Expanded(
-              child: Form(
-                key: _formKey,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                child: Stepper(
-                  currentStep: _stepPage,
-                  onStepContinue: () {
-                    if (_stepPage < 5) {
-                      setState(() {
-                        _stepPage++;
-                      });
-                    }
-                  },
-                  onStepCancel: () {
-                    if (_stepPage > 0) {
-                      setState(() {
-                        _stepPage--;
-                      });
-                    }
-                  },
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(title: Text("Home")),
+            body: Column(
+              children: [
+                Expanded(
+                  child: Form(
+                    key: _formKey,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    child: Stepper(
+                      currentStep: _stepPage,
+                      onStepContinue: () {
+                        if (_stepPage < 5) {
+                          setState(() {
+                            _stepPage++;
+                          });
+                        }
+                      },
+                      onStepCancel: () {
+                        if (_stepPage > 0) {
+                          setState(() {
+                            _stepPage--;
+                          });
+                        }
+                      },
 
-                  onStepTapped: (value) {
-                    setState(() {
-                      _stepPage = value;
-                    });
-                  },
-                  connectorColor: WidgetStateProperty.all(Colors.deepPurple),
-                  controlsBuilder: (context, details) {
-                    return MainControlsButton(
-                      details: details,
-                      stepPage: _stepPage,
-                    );
-                  },
+                      onStepTapped: (value) {
+                        if (context.read<UserFormVm>().tapAndValidate(
+                          _stepPage,
+                        )) {
+                          setState(() {
+                            _stepPage = value;
+                            context.read<UserFormVm>().validateAndContinue(
+                              value - 1,
+                              _formKey,
+                            );
+                          });
+                        }
+                      },
+                      connectorColor: WidgetStateProperty.all(
+                        Colors.deepPurple,
+                      ),
+                      controlsBuilder: (context, details) {
+                        return MainControlsButton(
+                          details: details,
+                          stepPage: _stepPage,
+                          formKey: _formKey,
+                        );
+                      },
 
-                  steps: [
-                    ///name
-                    Step(
-                      title: Text("Enter your name"),
-                      state: _stepPage == 0
-                          ? StepState.editing
-                          : StepState.indexed,
-                      content: NameField(),
+                      steps: [
+                        ///name
+                        Step(
+                          title: Text("Enter your name"),
+                          state: context.select<UserFormVm, StepState>(
+                            (value) => value.nameState,
+                          ),
+
+                          content: NameField(stepPage: _stepPage),
+                        ),
+
+                        ///dob
+                        Step(
+                          title: Text("Enter your date of birth"),
+                          content: DOBField(stepPage: _stepPage),
+                          state: context.select<UserFormVm, StepState>(
+                            (value) => value.dobState,
+                          ),
+                        ),
+
+                        ///gender
+                        Step(
+                          title: Text("Select your gender"),
+                          content: GenderRadio(stepPage: _stepPage),
+                          state: context.select<UserFormVm, StepState>(
+                            (value) => value.genderState,
+                          ),
+                        ),
+
+                        ///height
+                        Step(
+                          title: Text("Select your height"),
+                          content: HeightSlider(stepPage: _stepPage),
+                          state: context.select<UserFormVm, StepState>(
+                            (value) => value.heightState,
+                          ),
+                        ),
+
+                        ///hobbies
+                        Step(
+                          title: Text("Select your hobbies"),
+                          content: HobbiesChips(stepPage: _stepPage),
+                          state: context.select<UserFormVm, StepState>(
+                            (value) => value.hobbiesState,
+                          ),
+                        ),
+
+                        ///country
+                        Step(
+                          title: Text("Select your country"),
+                          content: CountryAutocomplete(stepPage: _stepPage),
+                          state: context.select<UserFormVm, StepState>(
+                            (value) => value.countryState,
+                          ),
+                        ),
+                      ],
                     ),
-
-                    ///dob
-                    Step(
-                      title: Text("Enter your date of birth"),
-                      content: DOBField(),
-                    ),
-
-                    ///gender
-                    Step(
-                      title: Text("Select your gender"),
-                      content: GenderRadio(),
-                    ),
-
-                    ///height
-                    Step(
-                      title: Text("Select your height"),
-                      content: HeightSlider(),
-                    ),
-
-                    ///hobbies
-                    Step(
-                      title: Text("Select your hobbies"),
-                      content: HobbiesChips(),
-                    ),
-
-                    ///country
-                    Step(
-                      title: Text("Select your country"),
-                      content: CountryAutocomplete(),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
+          ),
 
-            ElevatedButton(
-              onPressed: () {
-                context.read<UserFormVm>().setUserData();
-                _formKey.currentState?.validate();
-                _formKey.currentState?.reset();
-
-                context.read<UserFormVm>().clearData();
-              },
-              child: Text("hey"),
-            ),
-          ],
-        ),
+          Selector<UserFormVm, bool>(
+            selector: (context, x) => x.isLoading,
+            builder: (context, isLoading, child) {
+              print("loader called $isLoading");
+              return Visibility(
+                visible: isLoading,
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Colors.black.withAlpha(190),
+                  child: Center(
+                    child: SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: CircularProgressIndicator(strokeWidth: 10),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
