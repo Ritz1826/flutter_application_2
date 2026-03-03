@@ -120,7 +120,13 @@ class UserFormVm extends ChangeNotifier {
     notifyListeners();
   }
 
-  void validateAndContinue(int stepPage, GlobalKey<FormState> formKey) async {
+  void validateAndContinue(
+    int stepPage,
+    GlobalKey<FormState> formKey, {
+    Function()? shouldProceed,
+    Function(dynamic e)? onError,
+  }) async {
+    ///todo - switch
     if (stepPage == 1) {
       getGenderState(stepPage + 1);
     }
@@ -138,16 +144,29 @@ class UserFormVm extends ChangeNotifier {
     }
 
     if (stepPage == 5) {
-      isLoading = true;
+      try {
+        bool x = await shouldProceed!();
 
-      await Future.delayed(Duration(seconds: 10));
+        if (x) {
+          print("am i hereeeee");
+          isLoading = true;
 
-      setUserData();
-      formKey.currentState?.reset();
+          await Future.delayed(Duration(seconds: 10));
 
-      clearData();
+          setUserData();
+          formKey.currentState?.reset();
 
-      isLoading = false;
+          clearData();
+
+          isLoading = false;
+        } else {
+          print("or am i hereeeee");
+          throw Exception("failed");
+        }
+      } catch (e) {
+        print("rintu ${e.toString()}");
+        onError?.call(e);
+      }
     }
   }
 
@@ -214,8 +233,12 @@ class UserFormVm extends ChangeNotifier {
   void getNameState(int stepPage, String? value) {
     if (stepPage == 0 && userName == null) {
       nameState = StepState.editing;
-    } else if (stepPage == 0 && !isNameValidator(value)) {
+      return;
+    }
+
+    if (stepPage == 0 && !isNameValidator(value)) {
       nameState = StepState.error;
+      return;
     } else if (isNameValidator(value)) {
       nameState = StepState.complete;
     } else {

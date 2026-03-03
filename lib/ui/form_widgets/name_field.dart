@@ -24,7 +24,7 @@ class _NameFieldState extends State<NameField> {
   @override
   Widget build(BuildContext context) {
     final vm = context.read<UserFormVm>();
-
+    print("build name build");
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

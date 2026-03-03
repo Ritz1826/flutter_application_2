@@ -31,9 +31,36 @@ class _Home extends State<Home> {
       child: Stack(
         children: [
           Scaffold(
+            // bottomSheet: Container(
+            //   color: Colors.yellow,
+            //   width: 200,
+            //   height: 200,
+            //   child: TextButton(onPressed: () {}, child: Text("call or close")),
+            // ),
             appBar: AppBar(title: Text("Home")),
             body: Column(
               children: [
+                TextButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          "doneeee jdsh kfjhsk hfkjshd kfjhs kdfhkdshjf kjhd fkjsh ",
+                        ),
+                        dismissDirection: DismissDirection.horizontal,
+                        showCloseIcon: true,
+                        behavior: SnackBarBehavior.floating,
+                        actionOverflowThreshold: 0.9,
+                        action: SnackBarAction(
+                          label: "check",
+                          onPressed: () {},
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text("show"),
+                ),
+
                 Expanded(
                   child: Form(
                     key: _formKey,
@@ -42,6 +69,7 @@ class _Home extends State<Home> {
                       currentStep: _stepPage,
                       onStepContinue: () {
                         if (_stepPage < 5) {
+                          /// avoid setstate in long widget tree
                           setState(() {
                             _stepPage++;
                           });
