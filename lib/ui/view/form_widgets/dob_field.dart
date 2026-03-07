@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart'
     show UserFormVm;
 import 'package:provider/provider.dart';
-import 'package:flutter_application_2/ui/form_widgets/widget_helpers/dob_helpers.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/widget_helpers/dob_helpers.dart';
 
 class DOBField extends StatefulWidget {
   final int stepPage;

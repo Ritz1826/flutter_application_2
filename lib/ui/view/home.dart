@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/ui/form_widgets/country_autocomplete.dart';
-import 'package:flutter_application_2/ui/form_widgets/dob_field.dart';
-import 'package:flutter_application_2/ui/form_widgets/gender_radio.dart';
-import 'package:flutter_application_2/ui/form_widgets/height_slider.dart';
-import 'package:flutter_application_2/ui/form_widgets/hobbies_chips.dart';
-import 'package:flutter_application_2/ui/form_widgets/main_controls_button.dart';
-import 'package:flutter_application_2/ui/form_widgets/name_field.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/country_autocomplete.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/dob_field.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/gender_radio.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/height_slider.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/hobbies_chips.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/main_controls_button.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/name_field.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/widget_helpers/home_helper.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:provider/provider.dart';
 
@@ -31,15 +32,19 @@ class _Home extends State<Home> {
       child: Stack(
         children: [
           Scaffold(
-            // bottomSheet: Container(
-            //   color: Colors.yellow,
-            //   width: 200,
-            //   height: 200,
-            //   child: TextButton(onPressed: () {}, child: Text("call or close")),
-            // ),
             appBar: AppBar(title: Text("Home")),
             body: Column(
               children: [
+                Container(
+                  height: 200,
+                  width: 200,
+                  color: Colors.yellow,
+                  child: CustomPaint(
+                    size: Size(200, 200),
+                    painter: MyPainter(),
+                  ),
+                ),
+
                 TextButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(

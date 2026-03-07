@@ -18,6 +18,10 @@ class HomeLayout extends StatelessWidget {
         },
 
         items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.animation),
+            label: "Animations",
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.man), label: "profile"),
         ],
