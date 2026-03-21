@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/ui/view/animations.dart';
+import 'package:flutter_application_2/ui/view/data.dart';
 import 'package:flutter_application_2/ui/view/home.dart';
 import 'package:flutter_application_2/ui/view/home_layout.dart';
 import 'package:flutter_application_2/ui/view/profile.dart';
 import 'package:flutter_application_2/ui/view/settings.dart' show Settings;
+import 'package:flutter_application_2/ui/view_model/university_data_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
+import 'package:flutter_application_2/ui/view_model/user_posts_vm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +24,14 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: Size(300, 600),
       minTextAdapt: true,
-      child: ChangeNotifierProvider(
-        create: (context) => UserFormVm(),
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => UserFormVm()),
+
+          ChangeNotifierProvider(create: (context) => UniversityDataVm()),
+
+          ChangeNotifierProvider(create: (context) => UserPostsVm()),
+        ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
@@ -32,7 +41,8 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           ),
           routerConfig: GoRouter(
-            initialLocation: "/animations",
+            initialLocation: "/data",
+
             routes: [
               GoRoute(
                 path: "/settings",
@@ -45,6 +55,15 @@ class MyApp extends StatelessWidget {
                 },
 
                 branches: [
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: "/data",
+                        builder: (context, state) => Data(),
+                      ),
+                    ],
+                  ),
+
                   StatefulShellBranch(
                     routes: [
                       GoRoute(

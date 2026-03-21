@@ -38,6 +38,10 @@ dependencies:
   flutter_screenutil: ^5.9.3
   provider: ^6.1.5+1
   lottie: ^3.3.2
+  http: ^1.6.0
+  image_picker: ^1.2.1
+  dio: ^5.9.2
+  pretty_dio_logger: ^1.4.0
 
 dev_dependencies:
   flutter_test:
