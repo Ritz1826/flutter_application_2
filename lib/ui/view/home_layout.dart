@@ -21,6 +21,8 @@ class HomeLayout extends StatelessWidget {
         },
 
         items: [
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: "University"),
+
           BottomNavigationBarItem(icon: Icon(Icons.data_array), label: "Data"),
 
           BottomNavigationBarItem(

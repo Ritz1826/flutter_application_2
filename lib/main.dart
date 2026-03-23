@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/ui/data_model/university_data_model.dart';
 import 'package:flutter_application_2/ui/view/animations.dart';
 import 'package:flutter_application_2/ui/view/data.dart';
+import 'package:flutter_application_2/ui/view/form_widgets/university_data.dart';
 import 'package:flutter_application_2/ui/view/home.dart';
 import 'package:flutter_application_2/ui/view/home_layout.dart';
 import 'package:flutter_application_2/ui/view/profile.dart';
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           ),
           routerConfig: GoRouter(
-            initialLocation: "/data",
+            initialLocation: "/universityData",
 
             routes: [
               GoRoute(
@@ -55,6 +57,15 @@ class MyApp extends StatelessWidget {
                 },
 
                 branches: [
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: "/universityData",
+                        builder: (context, state) => UniversityDataPage(),
+                      ),
+                    ],
+                  ),
+
                   StatefulShellBranch(
                     routes: [
                       GoRoute(

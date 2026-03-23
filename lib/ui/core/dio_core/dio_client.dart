@@ -20,7 +20,7 @@ class DioClient {
     );
 
     dio.interceptors.addAll([
-      PrettyDioLogger(requestBody: true, responseBody: true),
+      // PrettyDioLogger(requestBody: true, responseBody: true),
     ]);
   }
 
