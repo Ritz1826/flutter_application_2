@@ -5,10 +5,12 @@ import 'package:flutter_application_2/ui/view/data.dart';
 import 'package:flutter_application_2/ui/view/form_widgets/university_data.dart';
 import 'package:flutter_application_2/ui/view/home.dart';
 import 'package:flutter_application_2/ui/view/home_layout.dart';
+import 'package:flutter_application_2/ui/view/images.dart';
 import 'package:flutter_application_2/ui/view/profile.dart';
 import 'package:flutter_application_2/ui/view/settings.dart' show Settings;
 import 'package:flutter_application_2/ui/view_model/university_data_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
+import 'package:flutter_application_2/ui/view_model/user_images_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_posts_vm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => UniversityDataVm()),
 
           ChangeNotifierProvider(create: (context) => UserPostsVm()),
+
+          ChangeNotifierProvider(create: (context) => UserImagesVm()),
         ],
         child: MaterialApp.router(
           debugShowCheckedModeBanner: false,
@@ -43,7 +47,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           ),
           routerConfig: GoRouter(
-            initialLocation: "/universityData",
+            initialLocation: "/profile",
 
             routes: [
               GoRoute(
@@ -57,6 +61,15 @@ class MyApp extends StatelessWidget {
                 },
 
                 branches: [
+                  StatefulShellBranch(
+                    routes: [
+                      GoRoute(
+                        path: "/userImages",
+                        builder: (context, state) => UserImages(),
+                      ),
+                    ],
+                  ),
+
                   StatefulShellBranch(
                     routes: [
                       GoRoute(

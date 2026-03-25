@@ -18,8 +18,8 @@ class _Data extends State<Data> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      //  context.read<UserPostsVm>().getAndSetPosts();
-      context.read<UniversityDataVm>().getAndSetUniversityData();
+      context.read<UserPostsVm>().getAndSetPosts();
+      //context.read<UniversityDataVm>().getAndSetUniversityData();
     });
 
     super.initState();

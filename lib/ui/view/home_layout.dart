@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/ui/core/api_helpers/debounce_helper.dart';
 import 'package:go_router/go_router.dart';
 
 class HomeLayout extends StatelessWidget {
@@ -17,10 +18,13 @@ class HomeLayout extends StatelessWidget {
 
         // currentIndex: 0,
         onTap: (index) {
+          DebounceHelper().timerDispose();
           navigationShell.goBranch(index);
         },
 
         items: [
+          BottomNavigationBarItem(icon: Icon(Icons.image), label: "Images"),
+
           BottomNavigationBarItem(icon: Icon(Icons.book), label: "University"),
 
           BottomNavigationBarItem(icon: Icon(Icons.data_array), label: "Data"),

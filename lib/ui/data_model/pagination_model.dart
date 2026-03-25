@@ -11,3 +11,18 @@ class PaginationModel<T> {
     required this.hasNextPage,
   });
 }
+
+class PaginationModel2<T> {
+  final List<T> userData;
+  final int currentPage;
+  //how any pages are there
+  final int pageCount;
+  final bool hasNextPage;
+
+  PaginationModel2({
+    required this.userData,
+    required this.currentPage,
+    required this.pageCount,
+    required this.hasNextPage,
+  });
+}

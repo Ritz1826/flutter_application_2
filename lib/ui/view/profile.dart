@@ -1,10 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 enum ViewType { apple, banana, grapes }
 
@@ -45,7 +50,7 @@ class _ProfileState extends State<Profile> {
   void initState() {
     myStream = myStreamController.stream.asBroadcastStream();
 
-    z = myStream.listen((onData) => print(onData.toString()));
+    //  z = myStream.listen((onData) => print(onData.toString()));
 
     // StreamSubscription x = myStream.listen(
     //   (data) {
@@ -78,6 +83,8 @@ class _ProfileState extends State<Profile> {
     super.dispose();
   }
 
+  File? imgFile;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +95,63 @@ class _ProfileState extends State<Profile> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ElevatedButton(
+                onPressed: () async {
+                  Directory dir = await getTemporaryDirectory();
+
+                  File myFile = File("${dir.path}/abc.txt");
+
+                  await myFile.writeAsString("hello motto");
+
+                  await myFile.writeAsString(
+                    " againn",
+                    mode: FileMode.writeOnlyAppend,
+                  );
+
+                  var content = await myFile
+                      .openRead()
+                      .transform(utf8.decoder)
+                      .transform(LineSplitter());
+
+                  content.listen((a) {
+                    print(a);
+                  });
+
+                  FileSystemEntityType typee = await FileSystemEntity.type(
+                    "https://myFile.path.com",
+                  );
+                  print(typee);
+                },
+                child: Text("Create file"),
+              ),
+
+              ElevatedButton(
+                onPressed: () async {
+                  ImagePicker imgPicker = ImagePicker();
+
+                  List<XFile>? myImage = await imgPicker.pickMultiImage();
+
+                  if (myImage.isEmpty) return;
+
+                  setState(() {
+                    imgFile = File(myImage.first.path);
+                  });
+                },
+                child: Text("image"),
+              ),
+
+              Image.file(imgFile ?? File("")),
+              ElevatedButton(
+                onPressed: () async {
+                  FilePickerResult? pickedFile = await FilePicker.platform
+                      .pickFiles();
+                  setState(() {
+                    imgFile = File(pickedFile?.files.single.path ?? "");
+                  });
+                },
+                child: Text("file"),
+              ),
+
               Container(
                 height: 300,
                 color: Colors.grey,
