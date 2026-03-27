@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/ui/data_model/university_data_model.dart';
+import 'package:flutter_application_2/ui/data_model/hive_boxes/user_notes.dart';
 import 'package:flutter_application_2/ui/view/animations.dart';
 import 'package:flutter_application_2/ui/view/data.dart';
 import 'package:flutter_application_2/ui/view/form_widgets/university_data.dart';
@@ -7,16 +7,25 @@ import 'package:flutter_application_2/ui/view/home.dart';
 import 'package:flutter_application_2/ui/view/home_layout.dart';
 import 'package:flutter_application_2/ui/view/images.dart';
 import 'package:flutter_application_2/ui/view/profile.dart';
-import 'package:flutter_application_2/ui/view/settings.dart' show Settings;
+import 'package:flutter_application_2/ui/view/notes.dart' show Settings, Notes;
 import 'package:flutter_application_2/ui/view_model/university_data_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_images_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_posts_vm.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(UserNotesAdapter());
+
+  await Hive.openBox<UserNotes>("user_notes");
+
   runApp(const MyApp());
 }
 
@@ -50,10 +59,7 @@ class MyApp extends StatelessWidget {
             initialLocation: "/profile",
 
             routes: [
-              GoRoute(
-                path: "/settings",
-                builder: (context, state) => Settings(),
-              ),
+              GoRoute(path: "/notes", builder: (context, state) => Notes()),
 
               StatefulShellRoute.indexedStack(
                 builder: (context, state, navigationShell) {

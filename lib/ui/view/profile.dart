@@ -6,10 +6,14 @@ import 'dart:ui';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_application_2/ui/data_model/sqldb_helper.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 enum ViewType { apple, banana, grapes }
 
@@ -95,6 +99,63 @@ class _ProfileState extends State<Profile> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ElevatedButton(
+                onPressed: () async {
+                  Database db = await SqldbHelper().initDB();
+
+                  // await db.insert('test', {
+                  //   "id": 1,
+                  //   "name": "ritika",
+                  //   "value": 18,
+                  //   "num": 28,
+                  // });
+
+                  await db.update(
+                    "test",
+                    {"id": 2, "name": "ritika", "value": 18, "num": 28},
+                    where: 'id = ?',
+                    whereArgs: [1],
+                  );
+
+                  var x = await db.query("test");
+
+                  print(x);
+                },
+                child: Text("Create sqlDB"),
+              ),
+
+              ElevatedButton(
+                onPressed: () async {
+                  final ss = FlutterSecureStorage();
+
+                  ss.write(key: "a", value: "aaa");
+                  ss.write(key: "b", value: "bbb");
+                  ss.write(key: "c", value: "ccc");
+                  var x = await ss.read(key: "a");
+                  print(x);
+                },
+                child: Text("Create file"),
+              ),
+
+              ElevatedButton(
+                onPressed: () async {
+                  final pref = await SharedPreferences.getInstance();
+
+                  pref.setString("token_a", "value1");
+                  pref.setString("token_b", "value1");
+                  pref.setString("token_c", "value1");
+
+                  var a = pref.getString("token_a");
+
+                  print(a);
+
+                  var b = pref.getKeys();
+
+                  print(b);
+                },
+                child: Text("Create file"),
+              ),
+
               ElevatedButton(
                 onPressed: () async {
                   Directory dir = await getTemporaryDirectory();
