@@ -1,4 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/ui/core/app_consts/app_consts.dart';
 import 'package:flutter_application_2/ui/data_model/hive_boxes/user_notes.dart';
 import 'package:flutter_application_2/ui/view/animations.dart';
 import 'package:flutter_application_2/ui/view/data.dart';
@@ -6,8 +8,13 @@ import 'package:flutter_application_2/ui/view/form_widgets/university_data.dart'
 import 'package:flutter_application_2/ui/view/home.dart';
 import 'package:flutter_application_2/ui/view/home_layout.dart';
 import 'package:flutter_application_2/ui/view/images.dart';
+import 'package:flutter_application_2/ui/view/otp_screen.dart';
+import 'package:flutter_application_2/ui/view/phone_screen.dart';
 import 'package:flutter_application_2/ui/view/profile.dart';
 import 'package:flutter_application_2/ui/view/notes.dart' show Settings, Notes;
+import 'package:flutter_application_2/ui/view/signin_screen.dart';
+import 'package:flutter_application_2/ui/view/signup_screen.dart';
+import 'package:flutter_application_2/ui/view/splash_screen.dart';
 import 'package:flutter_application_2/ui/view_model/university_data_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_form_vm.dart';
 import 'package:flutter_application_2/ui/view_model/user_images_vm.dart';
@@ -19,6 +26,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
 
   await Hive.initFlutter();
 
@@ -26,11 +34,11 @@ void main() async {
 
   await Hive.openBox<UserNotes>("user_notes");
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +64,68 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
           ),
           routerConfig: GoRouter(
-            initialLocation: "/profile",
+            navigatorKey: AppConsts.navigatorKey,
+            // errorBuilder: (context, state) {
+            //   return PhoneSignupScreen();
+            // },
+            initialLocation: "/phonesignup",
 
             routes: [
               GoRoute(path: "/notes", builder: (context, state) => Notes()),
+
+              GoRoute(
+                name: "splash",
+                path: "/splash",
+                builder: (context, state) => SplashScreen(),
+              ),
+
+              GoRoute(
+                name: "signup",
+                path: "/signup",
+                builder: (context, state) => SignupScreen(),
+              ),
+
+              GoRoute(
+                name: "signin",
+                path: "/signin",
+                builder: (context, state) => SigninScreen(),
+              ),
+
+              GoRoute(
+                path: '/__/auth/callback',
+                builder: (context, state) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+
+              GoRoute(
+                path: '/:pathMatch(.*)*',
+                builder: (context, state) {
+                  return const Scaffold(
+                    body: Center(child: Text('Redirecting...')),
+                  );
+                },
+              ),
+
+              // GoRoute(
+              //   name: "/",
+              //   path: "/",
+              //   builder: (context, state) => PhoneSignupScreen(),
+              // ),
+              GoRoute(
+                name: "otpscreen",
+                path: "/otpscreen",
+                builder: (context, state) =>
+                    OtpScreen(gotVerificationId: state.extra as String),
+              ),
+
+              GoRoute(
+                name: "phonesignup",
+                path: "/phonesignup",
+                builder: (context, state) => PhoneSignupScreen(),
+              ),
 
               StatefulShellRoute.indexedStack(
                 builder: (context, state, navigationShell) {
@@ -115,6 +181,7 @@ class MyApp extends StatelessWidget {
                   StatefulShellBranch(
                     routes: [
                       GoRoute(
+                        name: 'profile',
                         path: "/profile",
                         builder: (context, state) => Profile(),
                       ),
