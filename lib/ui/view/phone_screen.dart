@@ -2,9 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_application_2/ui/core/app_consts/app_consts.dart';
+import 'package:flutter_application_2/ui/view/helpers/notif_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class PhoneSignupScreen extends StatefulWidget {
   const PhoneSignupScreen({super.key});
@@ -35,6 +36,57 @@ class _PhoneSignupScreenState extends State<PhoneSignupScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              ElevatedButton(
+                onPressed: () async {
+                  final fbAuth = FirebaseAuth.instance;
+
+                  final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+                  await googleSignIn.initialize();
+
+                  try {
+                    final account = await googleSignIn.authenticate();
+
+                    if (account == null) return;
+
+                    final auth = await account.authentication;
+
+                    final credential = GoogleAuthProvider.credential(
+                      // accessToken: auth.idToken,
+                      idToken: auth.idToken,
+                    );
+
+                    final user = await fbAuth.signInWithCredential(credential);
+
+                    print(user.user?.displayName.toString());
+
+                    print(user.user?.phoneNumber);
+
+                    print(user.user?.email);
+                  } catch (e) {
+                    print("*** g error " + e.toString());
+                  }
+                },
+                child: Text("sign in by google"),
+              ),
+
+              ElevatedButton(
+                onPressed: () async {
+                  await NotifService().checkPerm();
+
+                  await Future.delayed(Duration(seconds: 1));
+
+                  try {
+                    print("notif triggered");
+                    await NotifService().showNotif();
+                    print("notif triggered 1");
+                  } catch (e) {
+                    print(e);
+                  }
+                },
+                child: Text("try"),
+              ),
+
               TextFormField(
                 controller: phoneNumController,
                 decoration: InputDecoration(

@@ -5,6 +5,7 @@ import 'package:flutter_application_2/ui/data_model/hive_boxes/user_notes.dart';
 import 'package:flutter_application_2/ui/view/animations.dart';
 import 'package:flutter_application_2/ui/view/data.dart';
 import 'package:flutter_application_2/ui/view/form_widgets/university_data.dart';
+import 'package:flutter_application_2/ui/view/helpers/notif_service.dart';
 import 'package:flutter_application_2/ui/view/home.dart';
 import 'package:flutter_application_2/ui/view/home_layout.dart';
 import 'package:flutter_application_2/ui/view/images.dart';
@@ -30,15 +31,17 @@ void main() async {
 
   await Hive.initFlutter();
 
+  await NotifService().initNotifPlugin();
+
   Hive.registerAdapter(UserNotesAdapter());
 
   await Hive.openBox<UserNotes>("user_notes");
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
